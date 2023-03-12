@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
+use App\Http\Controllers\Controller;
+use App\Http\Resources\ProductResource;
 
 class ProductController extends Controller
 {
@@ -15,17 +17,7 @@ class ProductController extends Controller
      */
     public function index()
     {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+        return ProductResource::collection(Product::all());
     }
 
     /**
@@ -36,7 +28,12 @@ class ProductController extends Controller
      */
     public function store(StoreProductRequest $request)
     {
-        //
+        $product = Product::create($request->all());
+
+        return response()->json([
+            'status' => true,
+            'message' => "product Created successfully!",
+        ], 201);
     }
 
     /**
@@ -47,18 +44,10 @@ class ProductController extends Controller
      */
     public function show(Product $product)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Product  $product
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Product $product)
-    {
-        //
+        if (!$product) {
+            return response()->json(['message' => 'Product not found'], 404);
+        }
+        return new ProductResource($product);
     }
 
     /**
@@ -70,7 +59,17 @@ class ProductController extends Controller
      */
     public function update(UpdateProductRequest $request, Product $product)
     {
-        //
+        $product->update($request->all());
+
+        if (!$product) {
+            return response()->json(['message' => 'product not found'], 404);
+        }
+
+        return response()->json([
+            'status' => true,
+            'message' => "product Updated successfully!",
+            'product' => $product
+        ], 200);
     }
 
     /**
@@ -81,6 +80,17 @@ class ProductController extends Controller
      */
     public function destroy(Product $product)
     {
-        //
+        $product->delete();
+
+        if (!$product) {
+            return response()->json([
+                'message' => 'product not found'
+            ], 404);
+        }
+
+        return response()->json([
+            'status' => true,
+            'message' => 'product deleted successfully'
+        ], 200);
     }
 }
