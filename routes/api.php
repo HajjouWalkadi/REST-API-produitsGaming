@@ -56,17 +56,3 @@ Route::controller(ProductController::class)->group(function () {
     Route::get('/products/{product}', 'show');
 });
 
-
-
-
-
-
-
-// Route::get('products',[ProductController::class,'index'])->middleware(['permission:add product']);
-// Route::post('products',[ProductController::class,'store']);
-// Route::get('products/{product}',[ProductController::class,'show']);
-// Route::put('products/{product}',[ProductController::class,'update']);
-// Route::delete('products/{product}',[ProductController::class,'destroy']);
-
-
-
