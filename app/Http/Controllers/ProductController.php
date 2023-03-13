@@ -20,6 +20,14 @@ class ProductController extends Controller
         return ProductResource::collection(Product::all());
     }
 
+    public function filterCategory( $filter){
+
+        $product=Product::join("categories","categories.id","=","products.category_id")
+                          ->where("name","=",$filter)->get();
+        return new ProductController($product);
+  
+      }
+
     /**
      * Store a newly created resource in storage.
      *

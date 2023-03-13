@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,16 +20,53 @@ use App\Http\Controllers\CategoryController;
 
 
 Route::controller(AuthController::class)->group(function () {
-    Route::post('login', 'login');
+    Route::post('login', 'login')->name('login');
     Route::post('register', 'register');
-    Route::post('logout', 'logout');
-    Route::post('refresh', 'refresh');
+    Route::post('forgotPassword','forgotPassword');
+    Route::post('resetpassword','resetpassword')->name('password.reset');
+    Route::middleware('auth:api')->group(function (){
+        Route::post('logout', 'logout');
+        Route::post('refresh', 'refresh'); 
+    });
 });
 
-Route::apiResource('categories', CategoryController::class);
 
-Route::get('products',[ProductController::class,'index']);
-Route::post('products',[ProductController::class,'store']);
-Route::get('products/{product}',[ProductController::class,'show']);
-Route::put('products/{product}',[ProductController::class,'update']);
-Route::delete('products/{product}',[ProductController::class,'destroy']);
+//Routes for category:
+
+// Route::apiResource('categories', CategoryController::class);
+
+Route::group(['controller' => CategoryController::class, 'prefix' => 'categories','middleware'=>'auth:api'], function () {
+    Route::get('', 'index')->middleware(['permission:view category']);
+    Route::post('', 'store')->middleware(['permission:add category']);
+    Route::get('/{category}', 'show')->middleware(['permission:view category']);
+    Route::put('/{category}', 'update')->middleware(['permission:edit category']);
+    Route::delete('/{category}', 'destroy')->middleware(['permission:delete category']);
+});
+
+//Routes for product:
+
+Route::group(['controller' => ProductController::class, 'prefix' => 'products','middleware'=>'auth:api'], function () {
+    Route::post('', 'store')->middleware(['permission:add product']);
+    Route::put('/{product}', 'update')->middleware(['permission:edit All product|edit My product']);
+    Route::delete('/{product}', 'destroy')->middleware(['permission:delete All product|delete My product']);
+});
+
+Route::controller(ProductController::class)->group(function () {
+    Route::get('/products', 'index');
+    Route::get('/products/{product}', 'show');
+});
+
+
+
+
+
+
+
+// Route::get('products',[ProductController::class,'index'])->middleware(['permission:add product']);
+// Route::post('products',[ProductController::class,'store']);
+// Route::get('products/{product}',[ProductController::class,'show']);
+// Route::put('products/{product}',[ProductController::class,'update']);
+// Route::delete('products/{product}',[ProductController::class,'destroy']);
+
+
+
