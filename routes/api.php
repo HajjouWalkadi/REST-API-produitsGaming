@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 
 /*
@@ -54,5 +55,16 @@ Route::group(['controller' => ProductController::class, 'prefix' => 'products','
 Route::controller(ProductController::class)->group(function () {
     Route::get('/products', 'index');
     Route::get('/products/{product}', 'show');
+});
+
+
+// Routes for Role:
+ 
+
+Route::group(['controller' => RoleController::class, 'prefix' => 'roles','middleware'=>'auth:api'], function () {
+    Route::get('', 'index')->middleware(['permission:view role']);
+    Route::post('', 'store')->middleware(['permission:add role']);
+    Route::get('/{role}', 'show')->middleware(['permission:view role']);
+    Route::put('/{role}', 'update')->middleware(['permission:edit role']);
 });
 
