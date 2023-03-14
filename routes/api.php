@@ -55,6 +55,8 @@ Route::group(['controller' => ProductController::class, 'prefix' => 'products','
 Route::controller(ProductController::class)->group(function () {
     Route::get('/products', 'index');
     Route::get('/products/{product}', 'show');
+    Route::get('/products/filter/category/{filter}','filterCategory');
+
 });
 
 
