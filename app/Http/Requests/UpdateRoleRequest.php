@@ -25,7 +25,7 @@ class UpdateRoleRequest extends FormRequest
     {
         return [
             'name' => 'required',
-            'permission_ids' => 'required|array|integer'
+            'permission_ids' => 'required|array'
         ];
     }
 }
