@@ -28,6 +28,14 @@ Route::controller(AuthController::class)->group(function () {
     Route::middleware('auth:api')->group(function (){
         Route::post('logout', 'logout');
         Route::post('refresh', 'refresh'); 
+
+        Route::group(['controller' => UserController::class], function () {
+            // Route::get('', 'index')->middleware(['permission:view my profil|view all profil']);
+            Route::put('updateNameEmail/{user}', 'updateNameEmail');
+            Route::put('updatePassword/{user}', 'updatePassword');
+            Route::put('changerole/{user}', 'changeRole');
+        });
+
     });
 });
 
@@ -68,5 +76,17 @@ Route::group(['controller' => RoleController::class, 'prefix' => 'roles','middle
     Route::post('', 'store')->middleware(['permission:add role']);
     Route::get('/{role}', 'show')->middleware(['permission:view role']);
     Route::put('/{role}', 'update')->middleware(['permission:edit role']);
+    Route::delete('/{role}', 'destroy');
+});
+
+
+// Routes for Profil:
+
+Route::group(['controller' => UserController::class, 'prefix' =>'users', 'middleware' => 'auth:api'], function () {
+    Route::get('', 'index')->middleware(['permission:view my profil|view all profil']);
+    // Route::put('updateNameEmail/{user}', 'updateNameEmail')->middleware(['permission:edit my profil|edit all profil']);
+    // Route::put('updatePassword/{user}', 'updatePassword')->middleware(['permission:edit my profil|edit all profil']);
+    Route::delete('/{user}', 'destroy')->middleware(['permission:delete my profil|delete all profil']);
+    Route::put('changerole/{user}', 'changeRole')->middleware(['permission:change role user']);
 });
 
